@@ -53,7 +53,6 @@ final class NfcManagerIos {
   }) {
     _tagSessionDidDetectTag = null;
     _tagSessionDidBecomeActive = null;
-    _tagSessionDidInvalidateWithError = null;
     return hostApi.tagSessionInvalidate(
       alertMessage: alertMessage,
       errorMessage: errorMessage,
