@@ -641,6 +641,7 @@ extension NfcManagerPlugin: NFCTagReaderSessionDelegate {
     DispatchQueue.main.sync {
       flutterApi.tagSessionDidInvalidateWithError(error: pigeonError) { _ in /* no op */ }
     }
+    self.tagSession = nil
   }
 
   public func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
