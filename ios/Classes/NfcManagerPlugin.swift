@@ -754,6 +754,14 @@ private func convert(_ value: NFCNDEFTag, _ completionHandler: @escaping (TagPig
 
   value.queryNDEFStatus { status, capacity, error in
     if let error = error {
+      // Fix: If tag data already exists (e.g., ISO7816, MiFare, FeliCa, ISO15693), return the data even if NDEF fails
+      if pigeon.iso7816 != nil || pigeon.miFare != nil || pigeon.feliCa != nil || pigeon.iso15693 != nil {
+        // Set NDEF to not supported, but still return tag data
+        pigeon.ndef = NdefPigeon(status: NdefStatusPigeon.notSupported, capacity: 0)
+        completionHandler(pigeon, nil) // Return tag data instead of nil
+        return
+      }
+      // Only return error if no other tag data existsp
       completionHandler(nil, error)
       return
     }
@@ -767,6 +775,12 @@ private func convert(_ value: NFCNDEFTag, _ completionHandler: @escaping (TagPig
     }
     value.readNDEF { message, error in
       if let error = error {
+        // Fix: If tag data already exists, return the data even if NDEF read fails
+        if pigeon.iso7816 != nil || pigeon.miFare != nil || pigeon.feliCa != nil || pigeon.iso15693 != nil {
+          completionHandler(pigeon, nil) // Return tag data instead of nil
+          return
+        }
+        // Only return error if no other tag data exists
         completionHandler(nil, error)
         return
       }
